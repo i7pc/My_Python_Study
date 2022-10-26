@@ -1,13 +1,4 @@
-"""
-Pretty much works, a few bugs to iron out
 
-1. empty folders are not deleted. Check the `in_folder` function +
-2. extensions are register dependant, no go +
-
-Things that are ot implemented yet:
-
-1. Getting base path from command line
-2. Archives are not unpacked into their own folders +
 """
 
 import os
