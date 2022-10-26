@@ -114,4 +114,3 @@ if __name__ == '__main__':
     BASE_FOLDER = BASE_DIR
     normalize()
     in_folder(BASE_DIR)
-    exit()
