@@ -26,37 +26,10 @@ for c, l in zip(CYRILLIC_SYMBOLS, TRANSLATION):
 BASE_FOLDER: Path | None = None
 
 
-def main():
-    """Перевіряємо шлях. 
-       Якщо все добре, то повертаємо ф-цію очищення. 
-        root_folder - так записуємо шлях до папки котру будемо чистити та сортувати.
-    """
-    global BASE_FOLDER
-
-    if len(sys.argv) < 2:
-        print('Enter path')
-        exit()
-
-    BASE_DIR = Path(sys.argv[1])  # root_folder Path("D:\Maya\Desktop\Хлам")
-
-    if (not BASE_DIR.exists()) or (not BASE_DIR.is_dir()):
-        print('Path incorrect')
-        exit()
-
-    BASE_FOLDER = BASE_DIR
-    normalize()
-    in_folder(BASE_DIR)
-
-
 def in_folder(dir_path):
     """ф-ція проходу проходу по каталогу"""
-    # створюємо перелік вмісту файлів та директорій всередині
-    all_items = os.listdir(dir_path)
 
-    if not all_items:
-        os.rmdir(dir_path)  # видаляємо директорію, якшо вона порожня
-
-    for item in all_items:  # перебираюємо всі файли і забираємо їх шляхи
+    for item in os.listdir(dir_path):  # перебираюємо всі файли і забираємо їх шляхи
 
         # якщо назва вже є -> продовжуємо
         if item in EXTENSION_DICT.keys():
@@ -78,6 +51,9 @@ def in_folder(dir_path):
             new_name = os.path.join(dir_path, normalize(name) + ext)
             os.rename(item_path, new_name)  # замінюємо файл
             sort(new_name)  # передаємо файл до ф-ції сорутвання
+
+    if not os.listdir(dir_path):
+        os.rmdir(dir_path)  # видаляємо директорію, якшо вона порожня
 
 
 def sort(file_path):
@@ -123,6 +99,19 @@ def work_f(name, file_path):
 
 
 if __name__ == '__main__':
-    main()
-    print("Finished")
+    global BASE_FOLDER
+
+    if len(sys.argv) < 2:
+        print('Enter path')
+        exit()
+
+    BASE_DIR = Path(sys.argv[1])
+
+    if (not BASE_DIR.exists()) or (not BASE_DIR.is_dir()):
+        print('Path incorrect')
+        exit()
+
+    BASE_FOLDER = BASE_DIR
+    normalize()
+    in_folder(BASE_DIR)
     exit()
