@@ -10,7 +10,6 @@ def command(*args):
         def inner(*args, **kwargs):
             return func(*args, **kwargs)
         for x in args:
-            # Нашо, якшо немає нечутливості до регістру?
             COMMANDS[x.lower()] = inner
         return inner
     return wrapper
