@@ -32,7 +32,7 @@ def in_folder(dir_path):
     for item in os.listdir(dir_path):  # перебираюємо всі файли і забираємо їх шляхи
 
         # якщо назва вже є -> продовжуємо
-        if item in EXTENSION_DICT.keys():
+        if item in EXTENSION_DICT():
             continue
         # створюємо шлях до директорії/файлу
         item_path = os.path.join(dir_path, item)
@@ -98,7 +98,7 @@ def work_f(name, file_path):
         os.replace(file_path, new_file)  # переміщуємо файл, бо не архів
 
 
-if __name__ == '__main__':
+def main():
     global BASE_FOLDER
 
     if len(sys.argv) < 2:
@@ -114,3 +114,7 @@ if __name__ == '__main__':
     BASE_FOLDER = BASE_DIR
     normalize()
     in_folder(BASE_DIR)
+
+
+if __name__ == '__main__':
+    main()
