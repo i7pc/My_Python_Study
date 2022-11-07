@@ -94,7 +94,6 @@ def command(*args):
         def inner(*args, **kwargs):
             return func(*args, **kwargs)
         for x in args:
-            # Нашо, якшо немає нечутливості до регістру?
             COMMANDS[x.lower()] = inner
         return inner
     return wrapper
@@ -138,7 +137,7 @@ def nothing():
 @command('add')
 @input_error({TypeError: "Enter name and number"})
 def add(name, number):
-    """ф-ція запису в словник і інформації
+    """ф-ція запису в словник інформації
     """
 
     if name in CONTACTS.data.keys():
@@ -194,13 +193,10 @@ def main():
     while True:
         # запит на введеня інформації
         string = input("Command: ")
-
+        # умова не чутливості до регістру
+        string = string.lower()
         if command := parse_command(string):
             command, args = command
-
-            # умова не чутливості до регістру
-            command = command.lower()
-
             result = COMMANDS[command](*args)
             # перевірка результату на виключення
             if not isinstance(result, Exception):
