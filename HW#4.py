@@ -16,35 +16,43 @@ def command(*args):
     return wrapper
 
 
-def input_error(error_message):
+def input_error(error_message_dict):
     """ф-ція декоратор який вловлює похибки
     """
     def wrapper(func):
         def inner(*args, **kwargs):
+            # пробуємо передати аргументи в ф-цію
             try:
                 return func(*args, **kwargs)
-            except (KeyError, ValueError, IndexError, TypeError) as err:
-                print(error_message)
-                return err
+            # якшо вловлюємо похибку і передаємо в змінну
+            except Exception as err:
+                if err in error_message_dict.keys():  # якшо похибка є ключем в словнику
+                    print(error_message_dict[err])  # видаємо похибку
+                    return err
+                raise err  # якшо якась невідома похибка, передаємо в змінну аби вивести
         return inner
     return wrapper
 
 
-@command("good_bye", "exit", "close")
-@input_error("This command doesn't take arguments")
+@command("good bye", "exit", "close")
+@input_error({TypeError: "This command doesn't take arguments"})
 def goodbye():
-    print("this is the end")
+    """ф-ція закінчення роботи якшо буде передана одна з команд
+    """
+    print("This is the end")
     exit()
 
 
 @command("hello")
-@input_error("This command doesn't take arguments")
+@input_error({TypeError: "This command doesn't take arguments"})
 def hello():
+    """ф-ція привітання. Видає повідовлення при запиті 
+    """
     return "How can I help you?"
 
 
 @command(".")
-@input_error("This command doesn't take arguments")
+@input_error({TypeError: "This command doesn't take arguments"})
 def nothing():
     exit()
 
@@ -52,14 +60,14 @@ def nothing():
 @command('add')
 @input_error("Enter name and number")
 def add(name, number):
-    """ф-ція запису в словник і інформації
+    """ф-ція запису в словник інформації
     """
     CONTACTS[name] = number
     return ""
 
 
-@command('show_all')
-@input_error("This command doesn't take arguments")
+@command('show all')
+@input_error({TypeError: "This command doesn't take arguments"})
 def show_all():
     """ф-ція виводу записаної інформації
     """
@@ -67,19 +75,31 @@ def show_all():
 
 
 @command('phone')
-@input_error("This command takes only Name arguments")
+@input_error({TypeError: "This command takes only Name arguments"})
 def phone(name):
-    """ф-ція запиту значення словнику за ключем
+    """ф-ція запиту №телефону словнику за ім"ям
     """
     return CONTACTS[name]
 
 
 @command('change')
+@input_error({
+    IndexError: "Non-existing name",
+    TypeError: "This command takes only Name arguments"
+})
 def change(name, number):
     """ф-ція команди "зміни". вносить зміну в значення словнику по ключу
     """
     CONTACTS[name] = number
     return ""
+
+
+def parse_command(string: str):
+    """ф-ція яка допогая отримати команду в звичайному варіант. Використовуємо звичайний пробіл
+    """
+    for command in COMMANDS.keys():
+        if string.startswith(command):
+            return command, string[len(command):].split()
 
 
 def main():
@@ -89,18 +109,18 @@ def main():
     while True:
         # запит на введеня інформації
         string = input("Command: ")
-        # обробляємо запит розбиваючи на команду та "все інше"
-        [command, *args] = string.split()
         # умова не чутливості до регістру
-        command = command.lower()
-        # перевірка на правильність вводу команди
-        result = COMMANDS.get(
-            command,
-            lambda *_: "invalid command"
-        )(*args)
-        # перевірка результату на виключення
-        if not isinstance(result, Exception):
-            print(result)
+        string = string.lower()
+        # обробляємо запит розбиваючи на команду та "все інше"
+        if command := parse_command(string):
+            command, args = command
+
+            result = COMMANDS[command](*args)
+            # перевірка результату на виключення
+            if not isinstance(result, Exception):
+                print(result)
+        else:
+            print("Invalid command")
 
 
 if __name__ == "__main__":
